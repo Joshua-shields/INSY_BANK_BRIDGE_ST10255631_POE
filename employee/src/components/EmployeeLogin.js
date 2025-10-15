@@ -25,19 +25,26 @@ const EmployeeLogin = ({ onLogin }) => {
     setError('');
     
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Mock validation
-      if (data.employeeId === 'EMP001' && data.password === 'admin123') {
-        onLogin({
-          id: 'EMP001',
-          name: 'John Admin',
-          role: 'Manager',
-          department: 'Operations'
-        });
+      // Call API
+      const response = await fetch('https://localhost:3000/employee/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: data.email,
+          password: data.password
+        }),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('authToken', result.token);
+        localStorage.setItem('user', JSON.stringify(result.user));
+        onLogin(result.user);
       } else {
-        setError('Invalid employee ID or password');
+        setError(result.error || 'Login failed. Please try again.');
       }
     } catch (err) {
       setError('Login failed. Please try again.');
@@ -78,12 +85,12 @@ const EmployeeLogin = ({ onLogin }) => {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               <TextField
-                label="Employee ID"
+                label="Email"
                 fullWidth
                 margin="normal"
-                {...register('employeeId', { required: 'Employee ID is required' })}
-                error={!!errors.employeeId}
-                helperText={errors.employeeId?.message}
+                {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } })}
+                error={!!errors.email}
+                helperText={errors.email?.message}
                 disabled={loading}
               />
 
@@ -111,7 +118,7 @@ const EmployeeLogin = ({ onLogin }) => {
             </form>
 
             <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 3 }}>
-              Demo credentials: EMP001 / admin123
+              Admin Portal - Authorized Personnel Only
             </Typography>
           </CardContent>
         </Card>

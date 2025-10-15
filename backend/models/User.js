@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const { encrypt, decrypt } = require('../utils/encryption');
 
 // User schema definition for mongodb how this works is we define the structure of user data
@@ -7,12 +8,12 @@ const { encrypt, decrypt } = require('../utils/encryption');
 const userSchema = new mongoose.Schema({
   name: { 
     type: String, 
-    required: true,
+    required: function() { return this.role !== 'admin'; },
     trim: true
   },
   idNumber: { 
     type: String, 
-    required: true, 
+    required: function() { return this.role !== 'admin'; }, 
     unique: true
   },
   password: { 
@@ -25,16 +26,10 @@ const userSchema = new mongoose.Schema({
     required: true, 
     unique: true
   },
-  email: { 
-    type: String, 
-    required: true,
-    unique: true,
-    validate: {
-      validator: function(v) {
-        return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(v); // basic email format validation
-      },
-      message: 'Please enter a valid email address'  // error message
-    }
+  role: {
+    type: String,
+    enum: ['customer', 'admin'],
+    default: 'customer'
   },
   // Security fields for account protection 
   // to prevent brute force attacks and unauthorized access
@@ -88,6 +83,14 @@ userSchema.methods.resetLoginAttempts = function() {
   });
 };
 
+// Hash password before saving
+userSchema.pre('save', async function(next) {
+  if (this.isModified('password')) {
+    this.password = await bcrypt.hash(this.password, 12);
+  }
+  next();
+});
+
 // Encrypt sensitive fields before saving
 // this includes id Number, account Number, and email
 userSchema.pre('save', function(next) {
@@ -103,14 +106,18 @@ userSchema.pre('save', function(next) {
   next();
 });
 
-// Method to get decrypted fields
+// Method to compare password
+userSchema.methods.comparePassword = async function(candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
+};
 userSchema.methods.getDecryptedData = function() {
   return {
     _id: this._id,
-    name: this.name,
-    idNumber: decrypt(this.idNumber),
+    name: this.name || 'Admin',
+    idNumber: this.idNumber ? decrypt(this.idNumber) : null,
     accountNumber: decrypt(this.accountNumber),
     email: decrypt(this.email),
+    role: this.role,
     mfaEnabled: this.mfaEnabled,
     loginAttempts: this.loginAttempts,
     lockUntil: this.lockUntil

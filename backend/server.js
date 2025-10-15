@@ -23,6 +23,9 @@ const User = require('./models/User');
 const { validateRegistration, validateLogin, validateForgotPassword, validateForgotUsername } = require('./middleware/validation');
 const { loginLimiter, registerLimiter, forgotPasswordLimiter, generateToken } = require('./middleware/auth');
 
+// Import routes
+const authRoutes = require('./routes/auth');
+
 // express app
 const app = express(); // create express app
 
@@ -100,6 +103,9 @@ const csrfProtection = csrf({
 app.get('/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
+
+// Use auth routes
+app.use('/', authRoutes);
 
 // Password validation with security requirements
 // used to ensure strong passwords
