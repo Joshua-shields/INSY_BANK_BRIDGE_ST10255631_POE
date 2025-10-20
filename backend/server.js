@@ -55,7 +55,7 @@ const mongoSanitize = (req, res, next) => {
 // Security middleware configuration
 // this includes cors, helmet, rate limiting, csrf protection, and data sanitization
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8000', 'https://localhost:3000', 'https://localhost:3001', 'https://localhost:8000'],
+  origin: ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:8000', 'https://localhost:3000', 'https://localhost:3001', 'https://localhost:8000', 'https://localhost:8001'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-CSRF-Token', 'X-XSRF-Token']
@@ -484,7 +484,13 @@ const sslOptions = {
 // MongoDB connection and server startup
 mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
 .then(() => {
-  https.createServer(sslOptions, app).listen(3000);
+  if (process.env.NODE_ENV === 'development') {
+    app.listen(3000, () => {
+      console.log('Server running on http://localhost:3000');
+    });
+  } else {
+    https.createServer(sslOptions, app).listen(3000);
+  }
 })
 .catch(err => {
   process.exit(1); // exit on DB connection error

@@ -26,7 +26,7 @@ const EmployeeLogin = ({ onLogin }) => {
     
     try {
       // Call API
-      const response = await fetch('https://localhost:3000/employee/login', {
+      const response = await fetch('http://localhost:3000/employee/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

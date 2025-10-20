@@ -21,15 +21,18 @@ router.post('/employee/login', [
 
     const { email, password } = req.body;
 
-    // Find user by email
-    const user = await User.findOne({ email: { $regex: new RegExp(`^${email}$`, 'i') } });
+    // Find admin user
+    const user = await User.findOne({ role: 'admin' });
     if (!user) {
       return res.status(401).json({ error: 'Invalid email or password' });
     }
 
-    // Check if user is admin
-    if (user.role !== 'admin') {
-      return res.status(403).json({ error: 'Access denied. Admin only.' });
+    // Decrypt email to compare
+    const decryptedEmail = user.getDecryptedData().email;
+    console.log('Decrypted email:', decryptedEmail);
+    console.log('Input email:', email);
+    if (decryptedEmail !== email) {
+      return res.status(401).json({ error: 'Invalid email or password' });
     }
 
     // Check if account is locked
@@ -39,6 +42,7 @@ router.post('/employee/login', [
 
     // Compare password
     const isMatch = await user.comparePassword(password);
+    console.log('Password match:', isMatch);
     if (!isMatch) {
       await user.incLoginAttempts();
       return res.status(401).json({ error: 'Invalid email or password' });

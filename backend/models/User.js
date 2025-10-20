@@ -21,11 +21,11 @@ const userSchema = new mongoose.Schema({
     required: true,
     minlength: 8
   },
-  accountNumber: { 
-    type: String, 
-    required: true, 
-    unique: true
-  },
+   email: { 
+     type: String, 
+     required: function() { return this.role !== 'admin'; },
+     unique: true
+   },
   role: {
     type: String,
     enum: ['customer', 'admin'],
