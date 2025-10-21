@@ -6,7 +6,7 @@ require('dotenv').config();
 async function seedAdmin() {
   try {
     // Connect to MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/bank_bridge', {
+    await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge', {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });

@@ -317,7 +317,7 @@ router.put('/employee/payments/:id/verify', async (req, res) => {
     // this is based on the ID of the transaction 
     const transaction = await Transaction.findByIdAndUpdate(
       req.params.id,
-      { status },
+      { status: status === 'verified' ? 'completed' : 'failed' },
       { new: true }
     );
     

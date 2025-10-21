@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
 
 //////////////////////////////////////////////////////////////////coming in part 3//////////////////////////////////////////////////////////////////
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -29,42 +29,41 @@ import NavigationBar from '../components/NavigationBar';
 const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const customers = [
-    {
-      id: 1,
-      name: 'John Doe',
-      accountNumber: '1234567890',
-      email: 'john@example.com',
-      phone: '+1234567890',
-      balance: 5000.00,
-      status: 'Active',
-      joinDate: '2023-01-15',
-      lastTransaction: '2025-09-22',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      accountNumber: '2345678901',
-      email: 'jane@example.com',
-      phone: '+1234567891',
-      balance: 3500.50,
-      status: 'Active',
-      joinDate: '2023-03-20',
-      lastTransaction: '2025-09-23',
-    },
-    {
-      id: 3,
-      name: 'Bob Wilson',
-      accountNumber: '3456789012',
-      email: 'bob@example.com',
-      phone: '+1234567892',
-      balance: 1200.75,
-      status: 'Suspended',
-      joinDate: '2023-05-10',
-      lastTransaction: '2025-09-20',
-    },
-  ];
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('No authentication token found');
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/api/admin/customers', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setCustomers(data.customers);
+        } else {
+          setError('Failed to fetch customers');
+        }
+      } catch (err) {
+        setError('Error fetching customers');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCustomers();
+  }, []);
 
   const handleViewCustomer = (customer) => {
     setSelectedCustomer(customer);
@@ -98,6 +97,16 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
         <Typography variant="h4" fontWeight="bold" gutterBottom>
           Customer Management
         </Typography>
+        
+        {error && (
+          <Typography variant="body1" color="error" gutterBottom>
+            {error}
+          </Typography>
+        )}
+        
+        {loading ? (
+          <Typography>Loading customers...</Typography>
+        ) : (
         
         <Card>
           <CardContent>
@@ -155,6 +164,7 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
             </TableContainer>
           </CardContent>
         </Card>
+        )}
       </Box>
 
       {/* Customer Details Dialog */}
@@ -233,24 +243,6 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
           )}
         </DialogContent>
         <DialogActions>
-          {selectedCustomer?.status === 'Active' && (
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<Block />}
-            >
-              Suspend Account
-            </Button>
-          )}
-          {selectedCustomer?.status === 'Suspended' && (
-            <Button
-              variant="outlined"
-              color="success"
-              startIcon={<CheckCircle />}
-            >
-              Activate Account
-            </Button>
-          )}
           <Button onClick={handleCloseDialog}>Close</Button>
         </DialogActions>
       </Dialog>

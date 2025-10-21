@@ -25,6 +25,7 @@ const { loginLimiter, registerLimiter, forgotPasswordLimiter, generateToken } = 
 
 // Import routes
 const authRoutes = require('./routes/auth');
+const employeesRoutes = require('./routes/employees');
 
 // express app
 const app = express(); // create express app
@@ -106,6 +107,9 @@ app.get('/csrf-token', csrfProtection, (req, res) => {
 
 // Use auth routes
 app.use('/', authRoutes);
+
+// Use employee routes
+app.use('/api', employeesRoutes);
 
 // Password validation with security requirements
 // used to ensure strong passwords

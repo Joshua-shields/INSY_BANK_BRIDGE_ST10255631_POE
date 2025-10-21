@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////coming in part 3//////////////////////////////////////////////////////////////////
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -26,57 +26,98 @@ import {
 import NavigationBar from '../components/NavigationBar';
 
 const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
-  const stats = [
+  const [stats, setStats] = useState({
+    totalCustomers: 0,
+    pendingPayments: 0,
+    verifiedToday: 0,
+    totalVolume: 0
+  });
+  const [recentActivities, setRecentActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('No authentication token found');
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/api/admin/stats', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setStats({
+            totalCustomers: data.totalCustomers,
+            pendingPayments: data.pendingPayments,
+            verifiedToday: data.verifiedToday,
+            totalVolume: data.totalVolume,
+          });
+        } else {
+          setError('Failed to fetch stats');
+        }
+      } catch (err) {
+        setError('Error fetching stats');
+      }
+    };
+
+    const fetchActivities = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) return;
+
+        const response = await fetch('http://localhost:3000/api/admin/activities', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setRecentActivities(data.activities);
+        }
+      } catch (err) {
+        console.error('Error fetching activities:', err);
+      }
+    };
+
+    fetchStats();
+    fetchActivities();
+    setLoading(false);
+  }, []);
+
+  const displayStats = [
     {
       title: 'Total Customers',
-      value: '1,234',
+      value: loading ? '...' : stats.totalCustomers.toLocaleString(),
       icon: <People />,
       color: '#2196f3',
     },
     {
       title: 'Pending Payments',
-      value: '23',
+      value: loading ? '...' : stats.pendingPayments.toString(),
       icon: <Schedule />,
       color: '#ff9800',
     },
     {
       title: 'Verified Today',
-      value: '156',
+      value: loading ? '...' : stats.verifiedToday.toString(),
       icon: <CheckCircle />,
       color: '#4caf50',
     },
     {
       title: 'Total Volume',
-      value: '$2.5M',
+      value: loading ? '...' : `$${stats.totalVolume.toLocaleString()}`,
       icon: <TrendingUp />,
       color: '#9c27b0',
-    },
-  ];
-
-  const recentActivities = [
-    {
-      id: 1,
-      action: 'Payment Verified',
-      customer: 'John Doe (****1234)',
-      amount: '$1,250.00',
-      time: '10 minutes ago',
-      status: 'completed',
-    },
-    {
-      id: 2,
-      action: 'New Customer Registered',
-      customer: 'Jane Smith',
-      amount: 'Initial Deposit: $500.00',
-      time: '25 minutes ago',
-      status: 'pending',
-    },
-    {
-      id: 3,
-      action: 'Payment Flagged',
-      customer: 'Bob Wilson (****5678)',
-      amount: '$10,000.00',
-      time: '1 hour ago',
-      status: 'warning',
     },
   ];
 
@@ -103,9 +144,15 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
           Dashboard Overview
         </Typography>
         
+        {error && (
+          <Typography variant="body1" color="error" gutterBottom>
+            {error}
+          </Typography>
+        )}
+        
         {/* Stats Cards */}
         <Grid container spacing={3} sx={{ mb: 4 }}>
-          {stats.map((stat, index) => (
+          {displayStats.map((stat, index) => (
             <Grid item xs={12} sm={6} md={3} key={index}>
               <Card sx={{ height: '100%' }}>
                 <CardContent>

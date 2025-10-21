@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////coming in part 3//////////////////////////////////////////////////////////////////
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Card,
@@ -31,45 +31,53 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   const [selectedPayment, setSelectedPayment] = useState(null);
   const [openDialog, setOpenDialog] = useState(false);
   const [verificationNote, setVerificationNote] = useState('');
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  const [payments, setPayments] = useState([
-    {
-      id: 'PAY001',
-      customerName: 'John Doe',
-      customerAccount: '1234567890',
-      recipientName: 'Jane Smith',
-      recipientAccount: '2345678901',
-      amount: 1250.00,
-      reference: 'Monthly rent payment',
-      date: '2025-09-23',
-      status: 'Pending',
-      swiftCode: 'ABCD1234',
-    },
-    {
-      id: 'PAY002',
-      customerName: 'Bob Wilson',
-      customerAccount: '3456789012',
-      recipientName: 'ABC Corporation',
-      recipientAccount: '4567890123',
-      amount: 10000.00,
-      reference: 'Large business payment',
-      date: '2025-09-23',
-      status: 'Pending',
-      swiftCode: 'EFGH5678',
-    },
-    {
-      id: 'PAY003',
-      customerName: 'Alice Johnson',
-      customerAccount: '5678901234',
-      recipientName: 'Tom Brown',
-      recipientAccount: '6789012345',
-      amount: 500.75,
-      reference: 'Loan repayment',
-      date: '2025-09-22',
-      status: 'Pending',
-      swiftCode: '',
-    },
-  ]);
+  useEffect(() => {
+    const fetchPayments = async () => {
+      try {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+          setError('No authentication token found');
+          return;
+        }
+
+        const response = await fetch('http://localhost:3000/api/employee/payments/pending', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const formattedPayments = data.transactions.map(txn => ({
+            id: txn._id,
+            customerName: txn.user ? txn.user.name : 'Unknown',
+            customerAccount: txn.user ? txn.user.accountNumber : 'Unknown',
+            recipientName: txn.transactionType === 'international' ? txn.accountHolderName : txn.recipientName,
+            recipientAccount: txn.transactionType === 'international' ? txn.accountNumber : 'LOCAL',
+            amount: txn.amount,
+            reference: txn.reference || '',
+            date: txn.transactionDate ? txn.transactionDate.split('T')[0] : 'N/A',
+            status: 'Pending',
+            swiftCode: txn.swiftCode || '',
+          }));
+          setPayments(formattedPayments);
+        } else {
+          setError('Failed to fetch payments');
+        }
+      } catch (err) {
+        setError('Error fetching payments');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPayments();
+  }, []);
 
   const handleViewPayment = (payment) => {
     setSelectedPayment(payment);
@@ -82,16 +90,36 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     setVerificationNote('');
   };
 
-  const handleVerifyPayment = (action) => {
+  const handleVerifyPayment = async (action) => {
     if (selectedPayment) {
-      setPayments(prev => 
-        prev.map(payment => 
-          payment.id === selectedPayment.id 
-            ? { ...payment, status: action === 'approve' ? 'Approved' : 'Rejected' }
-            : payment
-        )
-      );
-      handleCloseDialog();
+      try {
+        const token = localStorage.getItem('authToken');
+        const status = action === 'approve' ? 'verified' : 'rejected';
+        
+        const response = await fetch(`http://localhost:3000/api/employee/payments/${selectedPayment.id}/verify`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+          setPayments(prev => 
+            prev.map(payment => 
+              payment.id === selectedPayment.id 
+                ? { ...payment, status: action === 'approve' ? 'Approved' : 'Rejected' }
+                : payment
+            )
+          );
+          handleCloseDialog();
+        } else {
+          alert('Failed to verify payment');
+        }
+      } catch (err) {
+        alert('Error verifying payment');
+      }
     }
   };
 
@@ -120,10 +148,91 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           Payment Verification
         </Typography>
         
-        {pendingPayments.length === 0 && (
-          <Alert severity="info" sx={{ mb: 3 }}>
-            No pending payments require verification at this time.
-          </Alert>
+        {error && (
+          <Typography variant="body1" color="error" gutterBottom>
+            {error}
+          </Typography>
+        )}
+        
+        {loading ? (
+          <Typography>Loading payments...</Typography>
+        ) : (
+          <>
+            {pendingPayments.length === 0 && (
+              <Alert severity="info" sx={{ mb: 3 }}>
+                No pending payments require verification at this time.
+              </Alert>
+            )}
+            
+            <Card>
+              <CardContent>
+                <Typography variant="h6" fontWeight="bold" gutterBottom>
+                  Pending Payments ({pendingPayments.length})
+                </Typography>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Payment ID</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Customer</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Recipient</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="right">Amount</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                        <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {payments.map((payment) => (
+                        <TableRow key={payment.id} hover>
+                          <TableCell>
+                            <Typography variant="body2" fontWeight="bold">
+                              {payment.id}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body1">{payment.customerName}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {payment.customerAccount}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>
+                            <Typography variant="body1">{payment.recipientName}</Typography>
+                            <Typography variant="body2" color="text.secondary">
+                              {payment.recipientAccount}
+                            </Typography>
+                          </TableCell>
+                          <TableCell align="right">
+                            <Typography variant="body1" fontWeight="bold" color="primary">
+                              ${payment.amount.toFixed(2)}
+                            </Typography>
+                          </TableCell>
+                          <TableCell>{payment.date}</TableCell>
+                          <TableCell>
+                            <Chip 
+                              label={payment.status}
+                              color={getStatusColor(payment.status)}
+                              size="small"
+                            />
+                          </TableCell>
+                          <TableCell align="center">
+                            <Button
+                              variant="outlined"
+                              size="small"
+                              startIcon={<Visibility />}
+                              onClick={() => handleViewPayment(payment)}
+                            >
+                              Review
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </CardContent>
+            </Card>
+          </>
         )}
         
         <Card>
@@ -265,42 +374,16 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                 </Grid>
               </Grid>
 
-              {selectedPayment.amount > 5000 && (
-                <Alert severity="warning" sx={{ mb: 3 }}>
-                  This is a high-value transaction requiring additional verification.
-                </Alert>
-              )}
-
-              <TextField
-                label="Verification Notes"
-                multiline
-                rows={3}
-                fullWidth
-                value={verificationNote}
-                onChange={(e) => setVerificationNote(e.target.value)}
-                placeholder="Add any notes about this payment verification..."
-              />
+               {selectedPayment.amount > 5000 && (
+                 <Alert severity="warning" sx={{ mb: 3 }}>
+                   This is a high-value transaction requiring additional verification.
+                 </Alert>
+               )}
             </>
           )}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleCloseDialog}>Cancel</Button>
-          <Button
-            variant="outlined"
-            color="error"
-            startIcon={<Cancel />}
-            onClick={() => handleVerifyPayment('reject')}
-          >
-            Reject
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<CheckCircle />}
-            onClick={() => handleVerifyPayment('approve')}
-          >
-            Approve
-          </Button>
+          <Button onClick={handleCloseDialog}>Close</Button>
         </DialogActions>
       </Dialog>
     </Box>
