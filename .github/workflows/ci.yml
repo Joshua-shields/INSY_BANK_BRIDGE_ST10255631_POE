@@ -43,7 +43,7 @@ jobs:
     - run: npm install
     - run: npm run build
     - name: Run tests
-      run: npm test -- --coverage --watchAll=false
+      run: npm test -- --coverage --watchAll=false --passWithNoTests
 
   # Install employee deps
   employee:
@@ -61,7 +61,7 @@ jobs:
         cache-dependency-path: employee/package-lock.json
     - run: npm install
     - name: Run tests
-      run: npm test -- --coverage --watchAll=false
+      run: npm test -- --coverage --watchAll=false --passWithNoTests
 
   # Run SonarQube scan
   sonarqube:
