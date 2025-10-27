@@ -107,28 +107,28 @@ jobs:
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --file=package.json
+        args: --org=joshua-shields --file=package.json
     - name: Run Snyk SCA backend
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --file=backend/package.json
+        args: --org=joshua-shields --file=backend/package.json
     - name: Run Snyk SCA customer
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --file=customer/package.json
+        args: --org=joshua-shields --file=customer/package.json
     - name: Run Snyk SCA employee
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        args: --file=employee/package.json
+        args: --org=joshua-shields --file=employee/package.json
     - name: Run Snyk Code Test
       uses: snyk/actions/node@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       with:
-        command: code test
+        command: code test --org=joshua-shields
