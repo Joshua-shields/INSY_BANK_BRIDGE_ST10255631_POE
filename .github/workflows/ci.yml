@@ -77,3 +77,58 @@ jobs:
       uses: SonarSource/sonarqube-scan-action@v6
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+  # Security checks
+  security:
+    name: Security Analysis
+    runs-on: ubuntu-latest
+    needs: [backend, customer, employee]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+    - name: Install dependencies
+      run: |
+        npm install
+        cd backend && npm install
+        cd ../customer && npm install
+        cd ../employee && npm install
+    - name: Run npm audit
+      run: |
+        npm audit --audit-level moderate
+        cd backend && npm audit --audit-level moderate
+        cd ../customer && npm audit --audit-level moderate
+        cd ../employee && npm audit --audit-level moderate
+    - name: Run Snyk SCA
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=package.json
+    - name: Run Snyk SCA backend
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=backend/package.json
+    - name: Run Snyk SCA customer
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=customer/package.json
+    - name: Run Snyk SCA employee
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --file=employee/package.json
+    - name: Run Snyk Code Test
+      uses: snyk/actions/node@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        command: code test
