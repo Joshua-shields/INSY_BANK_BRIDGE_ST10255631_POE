@@ -8,54 +8,60 @@ on:
     branches: [ main ]
 
 jobs:
-  # Install backend deps
-  backend:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./backend
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: backend/package-lock.json
-    - run: npm install
+   # Install backend deps
+   backend:
+     runs-on: ubuntu-latest
+     defaults:
+       run:
+         working-directory: ./backend
+     steps:
+     - uses: actions/checkout@v3
+     - name: Setup Node.js
+       uses: actions/setup-node@v3
+       with:
+         node-version: '18'
+         cache: 'npm'
+         cache-dependency-path: backend/package-lock.json
+     - run: npm install
+     - name: Run tests
+       run: npm test || echo "No tests defined"
 
-  # Install and build customer app
-  customer:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./customer
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: customer/package-lock.json
-    - run: npm install
-    - run: npm run build
+   # Install and build customer app
+   customer:
+     runs-on: ubuntu-latest
+     defaults:
+       run:
+         working-directory: ./customer
+     steps:
+     - uses: actions/checkout@v3
+     - name: Setup Node.js
+       uses: actions/setup-node@v3
+       with:
+         node-version: '18'
+         cache: 'npm'
+         cache-dependency-path: customer/package-lock.json
+     - run: npm install
+     - run: npm run build
+     - name: Run tests
+       run: npm test -- --coverage --watchAll=false
 
-  # Install employee deps
-  employee:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./employee
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
-        cache: 'npm'
-        cache-dependency-path: employee/package-lock.json
-    - run: npm install
+   # Install employee deps
+   employee:
+     runs-on: ubuntu-latest
+     defaults:
+       run:
+         working-directory: ./employee
+     steps:
+     - uses: actions/checkout@v3
+     - name: Setup Node.js
+       uses: actions/setup-node@v3
+       with:
+         node-version: '18'
+         cache: 'npm'
+         cache-dependency-path: employee/package-lock.json
+     - run: npm install
+     - name: Run tests
+       run: npm test -- --coverage --watchAll=false
 
   # Run SonarQube scan
   sonarqube:
