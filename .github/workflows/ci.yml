@@ -3,9 +3,9 @@ name: CI
 # Run on push to main or branch, and PR to main
 on:
   push:
-    branches: [ main, Kash-updated-UI-Branch ]
+    branches: [ main, master, Kash-updated-UI-Branch ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   # Install backend deps
