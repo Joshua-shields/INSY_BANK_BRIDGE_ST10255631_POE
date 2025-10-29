@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "set PORT=8001 && react-scripts start",
-    "start-https": "set HTTPS=true && set SSL_CRT_FILE=../ssl/cert.pem && set SSL_KEY_FILE=../ssl/key.pem && set PORT=8001 && react-scripts start",
+    "start": "export PORT=8001 && react-scripts start",
+    "start-https": "export HTTPS=true && export SSL_CRT_FILE=../ssl/cert.pem && export SSL_KEY_FILE=../ssl/key.pem && export PORT=8001 && react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

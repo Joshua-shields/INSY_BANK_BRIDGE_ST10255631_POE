@@ -157,7 +157,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         {loading ? (
           <Typography>Loading payments...</Typography>
         ) : (
-          <>
+          <div>
             {pendingPayments.length === 0 && (
               <Alert severity="info" sx={{ mb: 3 }}>
                 No pending payments require verification at this time.
@@ -204,7 +204,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                           </TableCell>
                           <TableCell align="right">
                             <Typography variant="body1" fontWeight="bold" color="primary">
-                              ${payment.amount.toFixed(2)}
+                              R{payment.amount.toFixed(2)}
                             </Typography>
                           </TableCell>
                           <TableCell>{payment.date}</TableCell>
@@ -232,77 +232,8 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                 </TableContainer>
               </CardContent>
             </Card>
-          </>
+          </div>
         )}
-        
-        <Card>
-          <CardContent>
-            <Typography variant="h6" fontWeight="bold" gutterBottom>
-              Pending Payments ({pendingPayments.length})
-            </Typography>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Payment ID</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Customer</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Recipient</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="right">Amount</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {payments.map((payment) => (
-                    <TableRow key={payment.id} hover>
-                      <TableCell>
-                        <Typography variant="body2" fontWeight="bold">
-                          {payment.id}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body1">{payment.customerName}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {payment.customerAccount}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>
-                        <Typography variant="body1">{payment.recipientName}</Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {payment.recipientAccount}
-                        </Typography>
-                      </TableCell>
-                      <TableCell align="right">
-                        <Typography variant="body1" fontWeight="bold" color="primary">
-                          ${payment.amount.toFixed(2)}
-                        </Typography>
-                      </TableCell>
-                      <TableCell>{payment.date}</TableCell>
-                      <TableCell>
-                        <Chip 
-                          label={payment.status}
-                          color={getStatusColor(payment.status)}
-                          size="small"
-                        />
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          variant="outlined"
-                          size="small"
-                          startIcon={<Visibility />}
-                          onClick={() => handleViewPayment(payment)}
-                        >
-                          Review
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </CardContent>
-        </Card>
       </Box>
 
       {/* Payment Review Dialog */}
@@ -312,7 +243,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         </DialogTitle>
         <DialogContent>
           {selectedPayment && (
-            <>
+            <div>
               <Grid container spacing={3} sx={{ mt: 1, mb: 3 }}>
                 <Grid item xs={12} md={6}>
                   <TextField
@@ -349,7 +280,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                 <Grid item xs={12} md={6}>
                   <TextField
                     label="Amount"
-                    value={`$${selectedPayment.amount.toFixed(2)}`}
+                    value={`R${selectedPayment.amount.toFixed(2)}`}
                     fullWidth
                     disabled
                   />
@@ -374,12 +305,12 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                 </Grid>
               </Grid>
 
-               {selectedPayment.amount > 5000 && (
-                 <Alert severity="warning" sx={{ mb: 3 }}>
-                   This is a high-value transaction requiring additional verification.
-                 </Alert>
-               )}
-            </>
+              {selectedPayment.amount > 5000 && (
+                <Alert severity="warning" sx={{ mb: 3 }}>
+                  This is a high-value transaction requiring additional verification.
+                </Alert>
+              )}
+            </div>
           )}
         </DialogContent>
         <DialogActions>

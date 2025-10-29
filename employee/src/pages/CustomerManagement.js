@@ -117,7 +117,6 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
                     <TableCell sx={{ fontWeight: 'bold' }}>Customer Name</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Account Number</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Email</TableCell>
-                    <TableCell sx={{ fontWeight: 'bold' }} align="right">Balance</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }}>Last Transaction</TableCell>
                     <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
@@ -133,11 +132,6 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
                       </TableCell>
                       <TableCell>{customer.accountNumber}</TableCell>
                       <TableCell>{customer.email}</TableCell>
-                      <TableCell align="right">
-                        <Typography variant="body1" fontWeight="bold">
-                          ${customer.balance.toFixed(2)}
-                        </Typography>
-                      </TableCell>
                       <TableCell>
                         <Chip 
                           label={customer.status}
@@ -174,72 +168,56 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
         </DialogTitle>
         <DialogContent>
           {selectedCustomer && (
-            <Grid container spacing={3} sx={{ mt: 1 }}>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Full Name"
-                  value={selectedCustomer.name}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Account Number"
-                  value={selectedCustomer.accountNumber}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Email"
-                  value={selectedCustomer.email}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Phone"
-                  value={selectedCustomer.phone}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Current Balance"
-                  value={`$${selectedCustomer.balance.toFixed(2)}`}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Account Status"
-                  value={selectedCustomer.status}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Join Date"
-                  value={selectedCustomer.joinDate}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  label="Last Transaction"
-                  value={selectedCustomer.lastTransaction}
-                  fullWidth
-                  disabled
-                />
-              </Grid>
-            </Grid>
+             <Grid container spacing={3} sx={{ mt: 1 }}>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Full Name"
+                   value={selectedCustomer.name}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Account Number"
+                   value={selectedCustomer.accountNumber}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Email"
+                   value={selectedCustomer.email}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Account Status"
+                   value={selectedCustomer.status}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Join Date"
+                   value={selectedCustomer.joinDate}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+               <Grid item xs={12} md={6}>
+                 <TextField
+                   label="Last Transaction"
+                   value={selectedCustomer.lastTransaction}
+                   fullWidth
+                   disabled
+                 />
+               </Grid>
+             </Grid>
           )}
         </DialogContent>
         <DialogActions>
