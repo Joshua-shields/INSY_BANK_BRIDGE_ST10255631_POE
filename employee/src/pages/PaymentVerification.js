@@ -133,6 +133,8 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   };
 
   const pendingPayments = payments.filter(p => p.status === 'Pending');
+  const localPayments = pendingPayments.filter(p => p.recipientAccount === 'LOCAL');
+  const internationalPayments = pendingPayments.filter(p => p.recipientAccount !== 'LOCAL');
 
   return (
     <Box sx={{ minHeight: '100vh', backgroundColor: '#f5f7fa' }}>
@@ -164,74 +166,147 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
               </Alert>
             )}
             
-            <Card>
-              <CardContent>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  Pending Payments ({pendingPayments.length})
-                </Typography>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Payment ID</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Customer</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Recipient</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }} align="right">Amount</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
-                        <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {payments.map((payment) => (
-                        <TableRow key={payment.id} hover>
-                          <TableCell>
-                            <Typography variant="body2" fontWeight="bold">
-                              {payment.id}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body1">{payment.customerName}</Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {payment.customerAccount}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>
-                            <Typography variant="body1">{payment.recipientName}</Typography>
-                            <Typography variant="body2" color="text.secondary">
-                              {payment.recipientAccount}
-                            </Typography>
-                          </TableCell>
-                          <TableCell align="right">
-                            <Typography variant="body1" fontWeight="bold" color="primary">
-                              R{payment.amount.toFixed(2)}
-                            </Typography>
-                          </TableCell>
-                          <TableCell>{payment.date}</TableCell>
-                          <TableCell>
-                            <Chip 
-                              label={payment.status}
-                              color={getStatusColor(payment.status)}
-                              size="small"
-                            />
-                          </TableCell>
-                          <TableCell align="center">
-                            <Button
-                              variant="outlined"
-                              size="small"
-                              startIcon={<Visibility />}
-                              onClick={() => handleViewPayment(payment)}
-                            >
-                              Review
-                            </Button>
-                          </TableCell>
+            {localPayments.length > 0 && (
+              <Card sx={{ mb: 3 }}>
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    Local Payments ({localPayments.length})
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Payment ID</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Customer</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Recipient</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }} align="right">Amount</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
                         </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
-              </CardContent>
-            </Card>
+                      </TableHead>
+                      <TableBody>
+                        {localPayments.map((payment) => (
+                          <TableRow key={payment.id} hover>
+                            <TableCell>
+                              <Typography variant="body2" fontWeight="bold">
+                                {payment.id}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body1">{payment.customerName}</Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {payment.customerAccount}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body1">{payment.recipientName}</Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {payment.recipientAccount}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography variant="body1" fontWeight="bold" color="primary">
+                                R{payment.amount.toFixed(2)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>{payment.date}</TableCell>
+                            <TableCell>
+                              <Chip 
+                                label={payment.status}
+                                color={getStatusColor(payment.status)}
+                                size="small"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={<Visibility />}
+                                onClick={() => handleViewPayment(payment)}
+                              >
+                                Review
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+              </Card>
+            )}
+
+            {internationalPayments.length > 0 && (
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" fontWeight="bold" gutterBottom>
+                    International Payments ({internationalPayments.length})
+                  </Typography>
+                  <TableContainer component={Paper}>
+                    <Table>
+                      <TableHead>
+                        <TableRow>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Payment ID</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Customer</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Recipient</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }} align="right">Amount</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Date</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }}>Status</TableCell>
+                          <TableCell sx={{ fontWeight: 'bold' }} align="center">Actions</TableCell>
+                        </TableRow>
+                      </TableHead>
+                      <TableBody>
+                        {internationalPayments.map((payment) => (
+                          <TableRow key={payment.id} hover>
+                            <TableCell>
+                              <Typography variant="body2" fontWeight="bold">
+                                {payment.id}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body1">{payment.customerName}</Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {payment.customerAccount}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>
+                              <Typography variant="body1">{payment.recipientName}</Typography>
+                              <Typography variant="body2" color="text.secondary">
+                                {payment.recipientAccount}
+                              </Typography>
+                            </TableCell>
+                            <TableCell align="right">
+                              <Typography variant="body1" fontWeight="bold" color="primary">
+                                R{payment.amount.toFixed(2)}
+                              </Typography>
+                            </TableCell>
+                            <TableCell>{payment.date}</TableCell>
+                            <TableCell>
+                              <Chip 
+                                label={payment.status}
+                                color={getStatusColor(payment.status)}
+                                size="small"
+                              />
+                            </TableCell>
+                            <TableCell align="center">
+                              <Button
+                                variant="outlined"
+                                size="small"
+                                startIcon={<Visibility />}
+                                onClick={() => handleViewPayment(payment)}
+                              >
+                                Review
+                              </Button>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </TableContainer>
+                </CardContent>
+              </Card>
+            )}
           </div>
         )}
       </Box>
