@@ -16,6 +16,11 @@ const userSchema = new mongoose.Schema({
     required: function() { return this.role !== 'admin'; }, 
     unique: true
   },
+  accountNumber: {
+    type: String,
+    required: true,
+    unique: true
+  },
   password: { 
     type: String, 
     required: true,

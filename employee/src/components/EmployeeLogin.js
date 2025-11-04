@@ -33,6 +33,7 @@ const EmployeeLogin = ({ onLogin }) => {
         },
         body: JSON.stringify({
           email: data.email,
+          accountNumber: data.accountNumber,
           password: data.password
         }),
       });
@@ -91,6 +92,22 @@ const EmployeeLogin = ({ onLogin }) => {
                 {...register('email', { required: 'Email is required', pattern: { value: /^\S+@\S+$/i, message: 'Invalid email address' } })}
                 error={!!errors.email}
                 helperText={errors.email?.message}
+                disabled={loading}
+              />
+
+              <TextField
+                label="Account Number"
+                fullWidth
+                margin="normal"
+                {...register('accountNumber', { 
+                  required: 'Account number is required',
+                  pattern: {
+                    value: /^[0-9]{10,16}$/,
+                    message: 'Account number must be 10-16 digits'
+                  }
+                })}
+                error={!!errors.accountNumber}
+                helperText={errors.accountNumber?.message}
                 disabled={loading}
               />
 

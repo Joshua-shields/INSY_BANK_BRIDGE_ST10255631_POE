@@ -485,10 +485,32 @@ const sslOptions = {
   cert: fs.readFileSync(certPath)
 };
 
+// Function to ensure admin user exists
+async function ensureAdminExists() {
+  try {
+    const existingAdmin = await User.findOne({ role: 'admin' });
+    if (!existingAdmin) {
+      const admin = new User({
+        accountNumber: '10111026372637',
+        email: 'bankbridge@admin.com',
+        password: 'secure-admin-password',
+        role: 'admin'
+      });
+      await admin.save();
+      console.log('Admin user created successfully');
+    } else {
+      console.log('Admin user already exists');
+    }
+  } catch (error) {
+    console.error('Error ensuring admin exists:', error);
+  }
+}
+
 // MongoDB connection and server startup
 if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
-  .then(() => {
+  .then(async () => {
+    await ensureAdminExists();
     if (process.env.NODE_ENV === 'development') {
       app.listen(3000, () => {
         console.log('Server running on http://localhost:3000');

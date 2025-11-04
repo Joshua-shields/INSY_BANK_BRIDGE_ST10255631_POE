@@ -11,6 +11,7 @@ const router = express.Router();
 router.post('/employee/login', [
   loginLimiter,
   body('email').isEmail().normalizeEmail(),
+  body('accountNumber').isLength({ min: 10, max: 16 }).isNumeric(),
   body('password').isLength({ min: 8 })
 ], async (req, res) => {
   try {
@@ -19,20 +20,18 @@ router.post('/employee/login', [
       return res.status(400).json({ error: 'Invalid input data' });
     }
 
-    const { email, password } = req.body;
+    const { email, accountNumber, password } = req.body;
 
     // Find admin user
     const user = await User.findOne({ role: 'admin' });
     if (!user) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Decrypt email to compare
-    const decryptedEmail = user.getDecryptedData().email;
-    console.log('Decrypted email:', decryptedEmail);
-    console.log('Input email:', email);
-    if (decryptedEmail !== email) {
-      return res.status(401).json({ error: 'Invalid email or password' });
+    // Decrypt and verify both email and account number
+    const decryptedData = user.getDecryptedData();
+    if (decryptedData.email.toLowerCase() !== email.toLowerCase() || decryptedData.accountNumber !== accountNumber) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Check if account is locked
@@ -42,10 +41,9 @@ router.post('/employee/login', [
 
     // Compare password
     const isMatch = await user.comparePassword(password);
-    console.log('Password match:', isMatch);
     if (!isMatch) {
       await user.incLoginAttempts();
-      return res.status(401).json({ error: 'Invalid email or password' });
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     // Reset login attempts on successful login
