@@ -23,6 +23,7 @@ import {
   TextField,
   Grid,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import { CheckCircle, Cancel, Visibility } from '@mui/icons-material';
 import NavigationBar from '../components/NavigationBar';
@@ -34,6 +35,9 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   const [payments, setPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
+  const [confirmDenyDialog, setConfirmDenyDialog] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -94,6 +98,47 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     setOpenDialog(false);
     setSelectedPayment(null);
     setVerificationNote('');
+    setConfirmDenyDialog(false);
+  };
+
+  const handleDenyClick = () => {
+    setConfirmDenyDialog(true);
+  };
+
+  const handleConfirmDeny = async () => {
+    if (selectedPayment) {
+      try {
+        const token = localStorage.getItem('authToken');
+        
+        const response = await fetch(`http://localhost:3000/api/employee/payments/${selectedPayment.id}/deny`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            status: 'denied',
+            note: verificationNote 
+          }),
+        });
+
+        if (response.ok) {
+          // Remove the denied payment from the list
+          setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
+          setSuccessMessage(`Payment ${selectedPayment.id} has been denied successfully`);
+          setSnackbarOpen(true);
+          handleCloseDialog();
+          
+          // Clear success message after 5 seconds
+          setTimeout(() => setSuccessMessage(''), 5000);
+        } else {
+          const errorData = await response.json();
+          setError(errorData.error || 'Failed to deny payment');
+        }
+      } catch (err) {
+        setError('Error denying payment');
+      }
+    }
   };
 
   const handleVerifyPayment = async (action) => {
@@ -156,10 +201,16 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           Payment Verification
         </Typography>
         
+        {successMessage && (
+          <Alert severity="success" sx={{ mb: 2 }} onClose={() => setSuccessMessage('')}>
+            {successMessage}
+          </Alert>
+        )}
+        
         {error && (
-          <Typography variant="body1" color="error" gutterBottom>
+          <Alert severity="error" sx={{ mb: 2 }} onClose={() => setError('')}>
             {error}
-          </Typography>
+          </Alert>
         )}
         
         {loading ? (
@@ -391,13 +442,86 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
                   This is a high-value transaction requiring additional verification.
                 </Alert>
               )}
+              
+              <TextField
+                label="Denial Reason (Optional)"
+                value={verificationNote}
+                onChange={(e) => setVerificationNote(e.target.value)}
+                fullWidth
+                multiline
+                rows={3}
+                placeholder="Add reason for denying this payment (optional)..."
+                sx={{ mb: 2 }}
+              />
             </div>
           )}
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDialog}>Close</Button>
+        <DialogActions sx={{ p: 2, gap: 1 }}>
+          <Button onClick={handleCloseDialog} color="inherit">
+            Close
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            startIcon={<Cancel />}
+            onClick={handleDenyClick}
+          >
+            Deny Payment
+          </Button>
         </DialogActions>
       </Dialog>
+
+      {/* Confirm Deny Dialog */}
+      <Dialog open={confirmDenyDialog} onClose={() => setConfirmDenyDialog(false)}>
+        <DialogTitle>Confirm Payment Denial</DialogTitle>
+        <DialogContent>
+          <Alert severity="warning" sx={{ mb: 2 }}>
+            Are you sure you want to deny this payment? This action cannot be undone.
+          </Alert>
+          {selectedPayment && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Payment ID: <strong>{selectedPayment.id}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Amount: <strong>R{selectedPayment.amount.toFixed(2)}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Recipient: <strong>{selectedPayment.recipientName}</strong>
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmDenyDialog(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleConfirmDeny}
+          >
+            Confirm Deny
+          </Button>
+        </DialogActions>
+      </Dialog>
+      
+      {/* Success Snackbar Notification */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbarOpen(false)} 
+          severity="success" 
+          sx={{ width: '100%', fontSize: '1rem' }}
+          variant="filled"
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

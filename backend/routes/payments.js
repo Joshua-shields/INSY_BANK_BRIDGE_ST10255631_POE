@@ -339,5 +339,42 @@ router.put('/employee/payments/:id/verify', async (req, res) => {
   }
 });
 
+// Deny a payment endpoint
+router.put('/employee/payments/:id/deny', async (req, res) => {
+  try {
+    const { note } = req.body;
+    
+    // Update transaction status to denied/failed
+    const transaction = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      { 
+        status: 'failed',
+        verificationNote: note || 'Payment denied by admin'
+      },
+      { new: true }
+    );
+    
+    if (!transaction) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+    
+    // Log the denial for audit purposes
+    console.log(`Payment ${req.params.id} denied. Note: ${note || 'No note provided'}`);
+    
+    // Respond with success message
+    res.json({ 
+      message: 'Payment denied successfully',
+      transaction: {
+        id: transaction._id,
+        status: transaction.status,
+        verificationNote: note
+      }
+    });
+  } catch (error) {
+    console.error('Error denying payment:', error);
+    res.status(500).json({ error: 'Server error' });
+  }
+});
+
 module.exports = router; // export the router to be used in the main app
 //////////////////////////////////////////////////////////////////END OF FILE//////////////////////////////////////////////////////////////////

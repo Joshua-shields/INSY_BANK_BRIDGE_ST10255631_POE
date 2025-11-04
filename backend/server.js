@@ -1,7 +1,19 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
 // Load environment variables and required packages
 //////////////////////////////////////////////////////////////////VARIABLES//////////////////////////////////////////////////////////////////
-require('dotenv').config({ quiet: true });
+const dotenvResult = require('dotenv').config({ quiet: false });
+
+// Log environment loading status
+console.log('=== ENVIRONMENT CONFIGURATION ===');
+if (dotenvResult.error) {
+  console.warn('⚠ Warning: .env file not found or error loading it');
+  console.warn('Error:', dotenvResult.error.message);
+} else {
+  console.log('✓ .env file loaded successfully');
+  console.log('Loaded variables:', Object.keys(dotenvResult.parsed || {}).join(', '));
+}
+console.log('');
+
 const express = require('express'); 
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
@@ -488,8 +500,10 @@ const sslOptions = {
 // Function to ensure admin user exists
 async function ensureAdminExists() {
   try {
+    console.log('Searching for existing admin user...');
     const existingAdmin = await User.findOne({ role: 'admin' });
     if (!existingAdmin) {
+      console.log('No admin user found, creating one...');
       const admin = new User({
         accountNumber: '10111026372637',
         email: 'bankbridge@admin.com',
@@ -497,29 +511,83 @@ async function ensureAdminExists() {
         role: 'admin'
       });
       await admin.save();
-      console.log('Admin user created successfully');
+      console.log('✓ Admin user created successfully');
     } else {
-      console.log('Admin user already exists');
+      console.log('✓ Admin user already exists');
+      console.log('  Email:', existingAdmin.email);
+      console.log('  Role:', existingAdmin.role);
     }
   } catch (error) {
-    console.error('Error ensuring admin exists:', error);
+    console.error('✗ Error ensuring admin exists:', error.message);
+    console.error('Stack:', error.stack);
+    throw error; // Re-throw to trigger the catch in the connection handler
   }
 }
 
 // MongoDB connection and server startup
 if (process.env.NODE_ENV !== 'test') {
+  console.log('=== SERVER STARTUP SEQUENCE ===');
+  console.log('Environment:', process.env.NODE_ENV || 'development');
+  console.log('Attempting to connect to MongoDB...');
+  console.log('MongoDB URI:', process.env.MONGO_URI ? '✓ Configured' : '✗ Not configured (using default)');
+  console.log('Connection string:', process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge');
+  
   mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
   .then(async () => {
+    console.log('✓ MongoDB connected successfully');
+    console.log('Database:', mongoose.connection.name);
+    console.log('Host:', mongoose.connection.host);
+    
+    console.log('Checking for admin user...');
     await ensureAdminExists();
+    
+    console.log('Starting HTTP server...');
     // Always use HTTP for simplicity (no TLS errors)
     app.listen(3000, () => {
-      console.log('Server running on http://localhost:3000');
+      console.log('✓ Server running on http://localhost:3000');
+      console.log('=== SERVER READY ===');
     });
   })
   .catch(err => {
+    console.error('✗ FATAL ERROR: Failed to connect to MongoDB');
+    console.error('Error type:', err.name);
+    console.error('Error message:', err.message);
+    console.error('Full error:', err);
+    console.error('');
+    console.error('Troubleshooting steps:');
+    console.error('1. Check if MongoDB is running');
+    console.error('2. Verify MONGO_URI in .env file');
+    console.error('3. Check network connectivity');
+    console.error('4. Verify database credentials');
+    console.error('');
     process.exit(1); // exit on DB connection error
   });
 }
+
+// Add global error handlers
+process.on('uncaughtException', (err) => {
+  console.error('✗ UNCAUGHT EXCEPTION:');
+  console.error('Error:', err.message);
+  console.error('Stack:', err.stack);
+  process.exit(1);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('✗ UNHANDLED REJECTION:');
+  console.error('Reason:', reason);
+  console.error('Promise:', promise);
+  process.exit(1);
+});
+
+process.on('SIGTERM', () => {
+  console.log('SIGTERM signal received: closing HTTP server');
+  process.exit(0);
+});
+
+process.on('SIGINT', () => {
+  console.log('SIGINT signal received: closing HTTP server');
+  process.exit(0);
+});
 
 // Export app for testing
 module.exports = app;
