@@ -83,15 +83,20 @@ router.post('/login', [
 
     const { accountNumber, password } = req.body;
 
-    // Find user by account number
-    const user = await User.findOne({ accountNumber: { $regex: new RegExp(`^${accountNumber}$`, 'i') } });
+    // Find all customer users and search for matching account number
+    // (account numbers are encrypted, so we need to decrypt to compare)
+    const users = await User.find({ role: 'customer' });
+    const user = users.find(u => {
+      try {
+        const decrypted = u.getDecryptedData();
+        return decrypted.accountNumber === accountNumber;
+      } catch (err) {
+        return false;
+      }
+    });
+
     if (!user) {
       return res.status(401).json({ error: 'Invalid account number or password' });
-    }
-
-    // Check if user is customer
-    if (user.role !== 'customer') {
-      return res.status(403).json({ error: 'Access denied. Customer only.' });
     }
 
     // Check if account is locked
@@ -146,13 +151,17 @@ router.post('/register', [
 
     const { name, idNumber, accountNumber, email, password } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({
-      $or: [
-        { email: { $regex: new RegExp(`^${email}$`, 'i') } },
-        { accountNumber: { $regex: new RegExp(`^${accountNumber}$`, 'i') } },
-        { idNumber: { $regex: new RegExp(`^${idNumber}$`, 'i') } }
-      ]
+    // Check if user already exists (need to decrypt to compare)
+    const allUsers = await User.find({});
+    const existingUser = allUsers.find(u => {
+      try {
+        const decrypted = u.getDecryptedData();
+        return decrypted.email?.toLowerCase() === email.toLowerCase() ||
+               decrypted.accountNumber === accountNumber ||
+               decrypted.idNumber === idNumber;
+      } catch (err) {
+        return false;
+      }
     });
 
     if (existingUser) {

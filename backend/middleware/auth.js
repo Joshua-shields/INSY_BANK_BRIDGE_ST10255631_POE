@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'bank-bridge-secret-key-2024';
 // rate limiting for login attempts
 const loginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 requests per windowMs
+  max: 50, // limit each IP to 50 requests per windowMs (increased for development)
   message: { error: 'Too many login attempts, please try again later' }
 });
 

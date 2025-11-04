@@ -115,8 +115,8 @@ router.get('/admin/customers', verifyToken, async (req, res) => {
         phone: '', // Placeholder
         balance: 0, // Placeholder
         status: 'Active', // Placeholder
-        joinDate: cust.createdAt.toISOString().split('T')[0],
-        lastTransaction: lastTxn ? lastTxn.updatedAt.toISOString().split('T')[0] : 'N/A',
+        joinDate: cust.createdAt ? cust.createdAt.toISOString().split('T')[0] : 'N/A',
+        lastTransaction: lastTxn && lastTxn.updatedAt ? lastTxn.updatedAt.toISOString().split('T')[0] : 'N/A',
       };
     }));
 

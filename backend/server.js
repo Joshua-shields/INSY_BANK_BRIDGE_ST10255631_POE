@@ -88,8 +88,8 @@ const csrfProtection = csrf({
     key: '_csrf',
     path: '/',
     httpOnly: true,
-    secure: true,
-    sameSite: 'none'
+    secure: false, // Changed to false for HTTP
+    sameSite: 'lax' // Changed from 'none' to 'lax' for HTTP
   },
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
   value: (req) => {
@@ -511,13 +511,10 @@ if (process.env.NODE_ENV !== 'test') {
   mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
   .then(async () => {
     await ensureAdminExists();
-    if (process.env.NODE_ENV === 'development') {
-      app.listen(3000, () => {
-        console.log('Server running on http://localhost:3000');
-      });
-    } else {
-      https.createServer(sslOptions, app).listen(3000);
-    }
+    // Always use HTTP for simplicity (no TLS errors)
+    app.listen(3000, () => {
+      console.log('Server running on http://localhost:3000');
+    });
   })
   .catch(err => {
     process.exit(1); // exit on DB connection error
