@@ -77,6 +77,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'processing', 'completed', 'failed'],
     default: 'pending'
+  },
+  verificationNote: {
+    type: String,
+    trim: true,
+    default: ''
   }
 }, {
   timestamps: true
