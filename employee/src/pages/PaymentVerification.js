@@ -23,6 +23,7 @@ import {
   TextField,
   Grid,
   Alert,
+  Snackbar,
 } from '@mui/material';
 import { CheckCircle, Cancel, Visibility } from '@mui/icons-material';
 import NavigationBar from '../components/NavigationBar';
@@ -36,6 +37,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [confirmDenyDialog, setConfirmDenyDialog] = useState(false);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
     const fetchPayments = async () => {
@@ -124,6 +126,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           // Remove the denied payment from the list
           setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
           setSuccessMessage(`Payment ${selectedPayment.id} has been denied successfully`);
+          setSnackbarOpen(true);
           handleCloseDialog();
           
           // Clear success message after 5 seconds
@@ -502,6 +505,23 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           </Button>
         </DialogActions>
       </Dialog>
+      
+      {/* Success Snackbar Notification */}
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={5000}
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+      >
+        <Alert 
+          onClose={() => setSnackbarOpen(false)} 
+          severity="success" 
+          sx={{ width: '100%', fontSize: '1rem' }}
+          variant="filled"
+        >
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };
