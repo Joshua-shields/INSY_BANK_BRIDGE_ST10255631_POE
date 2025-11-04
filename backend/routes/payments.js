@@ -37,15 +37,22 @@ router.post('/customer/payments', verifyToken, async (req, res) => {
     
     const user = await User.findById(req.userId);
     if (!user) return res.status(404).json({ error: 'User not found' });
+    
+    // Get decrypted account number
+    const decryptedData = user.getDecryptedData();
+    
     // Create transaction
     const transaction = new Transaction({
-      amount: parseFloat(amount),  // Convert string to number
-      recipientAccount,
-      recipientName,
-      senderAccount: user.accountNumber,
-      swiftCode,
-      reference,
-      userId: req.userId,
+      user: req.userId,  // Changed from userId to user to match Transaction schema
+      transactionType: 'international',
+      accountHolderName: recipientName,
+      recipientName: recipientName,
+      accountNumber: recipientAccount,
+      bank: 'Standard Bank',  // Default bank
+      swiftCode: swiftCode,
+      amount: parseFloat(amount),
+      senderAccount: decryptedData.accountNumber,
+      reference: reference,
       status: 'pending'
     });
     

@@ -77,6 +77,12 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     };
 
     fetchPayments();
+
+    // Set up polling every 30 seconds
+    const interval = setInterval(fetchPayments, 30000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const handleViewPayment = (payment) => {

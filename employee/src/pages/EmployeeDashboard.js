@@ -89,9 +89,19 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
       }
     };
 
-    fetchStats();
-    fetchActivities();
+    const fetchData = async () => {
+      await fetchStats();
+      await fetchActivities();
+    };
+
+    fetchData();
     setLoading(false);
+
+    // Set up polling every 30 seconds
+    const interval = setInterval(fetchData, 30000);
+
+    // Cleanup interval on component unmount
+    return () => clearInterval(interval);
   }, []);
 
   const displayStats = [
@@ -231,7 +241,7 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
                       Review Pending Payments
                     </Typography>
                     <Typography variant="body2" color="text.secondary">
-                      23 payments waiting for verification
+                      {stats.pendingPayments} payment{stats.pendingPayments !== 1 ? 's' : ''} waiting for verification
                     </Typography>
                   </Box>
                   
