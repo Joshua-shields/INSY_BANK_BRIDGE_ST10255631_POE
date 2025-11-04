@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "export PORT=8001 && react-scripts start",
-    "start-https": "export HTTPS=true && export SSL_CRT_FILE=../ssl/cert.pem && export SSL_KEY_FILE=../ssl/key.pem && export PORT=8001 && react-scripts start",
+    "start": "cross-env PORT=8001 react-scripts start",
+    "start-https": "cross-env HTTPS=true SSL_CRT_FILE=../ssl/cert.pem SSL_KEY_FILE=../ssl/key.pem PORT=8001 react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -37,5 +37,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "cross-env": "^10.1.0"
   }
 }
