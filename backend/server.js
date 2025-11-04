@@ -486,17 +486,22 @@ const sslOptions = {
 };
 
 // MongoDB connection and server startup
-mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
-.then(() => {
-  if (process.env.NODE_ENV === 'development') {
-    app.listen(3000, () => {
-      console.log('Server running on http://localhost:3000');
-    });
-  } else {
-    https.createServer(sslOptions, app).listen(3000);
-  }
-})
-.catch(err => {
-  process.exit(1); // exit on DB connection error
-});
+if (process.env.NODE_ENV !== 'test') {
+  mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/bank_bridge')
+  .then(() => {
+    if (process.env.NODE_ENV === 'development') {
+      app.listen(3000, () => {
+        console.log('Server running on http://localhost:3000');
+      });
+    } else {
+      https.createServer(sslOptions, app).listen(3000);
+    }
+  })
+  .catch(err => {
+    process.exit(1); // exit on DB connection error
+  });
+}
+
+// Export app for testing
+module.exports = app;
 //////////////////////////////////////////////////////////////////END OF FILE//////////////////////////////////////////////////////////////////
