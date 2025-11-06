@@ -138,10 +138,6 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
 [Accessed 2 November 2025].
 
-- Payments Market Practice Group, 2023. Best Practice Guidance for the Return of Funds and Rejects of Payments. [Online] 
-Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
-[Accessed 2 November 2025].
-
 ## Annexure of AI use
 
 ## Kashvir Sewpersad
