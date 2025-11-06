@@ -1,3 +1,6 @@
+
+//--------------------------------------------  start of file  -----------------------------//
+
 // This script checks for the existence of an admin user in the database.
 // It connects to MongoDB, queries for an admin user, and logs the result.
 
@@ -31,3 +34,4 @@ async function checkAdmin() {
 
 // Execute the checkAdmin function
 checkAdmin();
+//----------------------------------------- end of file -------------------------------------//

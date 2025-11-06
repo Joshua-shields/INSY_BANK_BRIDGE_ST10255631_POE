@@ -106,6 +106,10 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 
 - ProgrammingKnowledge (2024). How to Install React JS In Visual Studio Code | How to Run React JS App in VS Code. [online] YouTube. Available at: https://www.youtube.com/watch?v=i41VU2d1Emk [Accessed 7 Oct. 2025].
 
+- Web Dev Simplified (2019). What Is JWT and Why Should You Use JWT. [online] YouTube. Available at: https://www.youtube.com/watch?v=7Q17ubqLfaM [Accessed 5 November 2025].
+
+‌
+
 ## Joshua
 
 - Tshwane Institute of Technology. (2021). *INFORMATION SYSTEMS 3D INSY7314 LAB GUIDE 2025*. [Online]. Available at: https://advtechonline.sharepoint.com/:w:/r/sites/TertiaryStudents/_layouts/15/Doc.aspx?sourcedoc=%7BAB1212E5-A367-4729-B8EE-D76045935659%7D&file=INSY7314%20Lab%20Guide%202025.docx&action=default&mobileredirect=true [Accessed 23 July 2025].
@@ -140,11 +144,41 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 
 I Kashvir Sewpersad, the Student, ST10257503, hereby declare that I have made use of artificial intelligence (AI) in the creation of this project. The nature of my usage was primarily for debugging purposes and improving the quality of the work I produced. Below are links to interactions I had with the AI tools.
 
-- https://chatgpt.com/share/68e7cdd6-dd04-8010-9fc5-5df8ef95f459
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 2  October 2025 
+A link to the actual  AI chat
+ https://chatgpt.com/share/68e7cdd6-dd04-8010-9fc5-5df8ef95f459
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 15  October 2025 
+A link to the actual  AI chat
 - https://chatgpt.com/share/68e7ce8f-d2c4-8010-8e4a-844b21b6f709
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 19  October 2025 
+A link to the actual  AI chat
 - https://chatgpt.com/share/68e7cf21-0ec0-8010-8234-1882dea0dc5b
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 28  October 2025 
+A link to the actual  AI chat
 - https://chatgpt.com/share/68e7cfaa-6100-8010-835a-11885c6638af
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 2 November 2025 
+A link to the actual  AI chat
 - https://chatgpt.com/share/68e7d0e0-c7c4-8010-8ffd-0991e7931fe5
+
+Name of AI tool used: chatgpt
+Date in which  AI was used: 2  November 2025 
+A link to the actual  AI chat
+- https://chatgpt.com/share/690c9fa4-5e24-8010-ad3f-92d2ccca2573
+
+Name of AI tool(s) used: chatgpt
+Date(s) in which  AI was used: 5  November 2025 
+A link to the actual  AI chat
+- https://chatgpt.com/share/690ca07b-3510-8010-8c66-f3e62ff07ef5
 
 ## Luke
 Disclosure of AI Usage in my Assessment. 
