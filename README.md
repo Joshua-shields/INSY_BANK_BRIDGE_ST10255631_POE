@@ -36,6 +36,12 @@ npm run dev
 # Terminal 2 - Customer Portal (http://localhost:8000)
 cd customer
 npm start on windows its npm run start-https
+
+or
+
+# Terminal 3 - Employee portal (http://localhost:8001)
+cd employee
+npm start on windows its npm run start-https
 ```
 
 ## NB Make sure u run https://localhost:3000/users and accept the certificate same as https://localhost:8000
