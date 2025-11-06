@@ -37,6 +37,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [confirmDenyDialog, setConfirmDenyDialog] = useState(false);
+  const [confirmApproveDialog, setConfirmApproveDialog] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
   useEffect(() => {
@@ -99,26 +100,31 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     setSelectedPayment(null);
     setVerificationNote('');
     setConfirmDenyDialog(false);
+    setConfirmApproveDialog(false);
   };
 
   const handleDenyClick = () => {
     setConfirmDenyDialog(true);
   };
 
+  const handleApproveClick = () => {
+    setConfirmApproveDialog(true);
+  };
+
   const handleConfirmDeny = async () => {
     if (selectedPayment) {
       try {
         const token = localStorage.getItem('authToken');
-        
+
         const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/deny`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ 
+          body: JSON.stringify({
             status: 'denied',
-            note: verificationNote 
+            note: verificationNote
           }),
         });
 
@@ -128,7 +134,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           setSuccessMessage(`Payment ${selectedPayment.id} has been denied successfully`);
           setSnackbarOpen(true);
           handleCloseDialog();
-          
+
           // Clear success message after 5 seconds
           setTimeout(() => setSuccessMessage(''), 5000);
         } else {
@@ -137,6 +143,41 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         }
       } catch (err) {
         setError('Error denying payment');
+      }
+    }
+  };
+
+  const handleConfirmApprove = async () => {
+    if (selectedPayment) {
+      try {
+        const token = localStorage.getItem('authToken');
+
+        const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/verify`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            status: 'verified'
+          }),
+        });
+
+        if (response.ok) {
+          // Remove the approved payment from the list
+          setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
+          setSuccessMessage(`Payment ${selectedPayment.id} has been approved successfully`);
+          setSnackbarOpen(true);
+          handleCloseDialog();
+
+          // Clear success message after 5 seconds
+          setTimeout(() => setSuccessMessage(''), 5000);
+        } else {
+          const errorData = await response.json();
+          setError(errorData.error || 'Failed to approve payment');
+        }
+      } catch (err) {
+        setError('Error approving payment');
       }
     }
   };
@@ -463,6 +504,14 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           </Button>
           <Button
             variant="contained"
+            color="success"
+            startIcon={<CheckCircle />}
+            onClick={handleApproveClick}
+          >
+            Approved
+          </Button>
+          <Button
+            variant="contained"
             color="error"
             startIcon={<Cancel />}
             onClick={handleDenyClick}
@@ -511,6 +560,41 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
             onClick={handleConfirmDeny}
           >
             Confirm Deny
+          </Button>
+        </DialogActions>
+      </Dialog>
+
+      {/* Confirm Approve Dialog */}
+      <Dialog open={confirmApproveDialog} onClose={() => setConfirmApproveDialog(false)}>
+        <DialogTitle>Confirm Payment Approval</DialogTitle>
+        <DialogContent>
+          <Alert severity="success" sx={{ mb: 2 }}>
+            Are you sure you want to approve this payment? This action cannot be undone.
+          </Alert>
+          {selectedPayment && (
+            <Box sx={{ mt: 2 }}>
+              <Typography variant="body2" color="text.secondary">
+                Payment ID: <strong>{selectedPayment.id}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Amount: <strong>R{selectedPayment.amount.toFixed(2)}</strong>
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Recipient: <strong>{selectedPayment.recipientName}</strong>
+              </Typography>
+            </Box>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmApproveDialog(false)} color="inherit">
+            Cancel
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleConfirmApprove}
+          >
+            Confirm Approve
           </Button>
         </DialogActions>
       </Dialog>
