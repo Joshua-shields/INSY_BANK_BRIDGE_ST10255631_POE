@@ -48,7 +48,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/employee/payments/pending', {
+        const response = await fetch('https://localhost:3000/api/employee/payments/pending', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
       try {
         const token = localStorage.getItem('authToken');
         
-        const response = await fetch(`http://localhost:3000/api/employee/payments/${selectedPayment.id}/deny`, {
+        const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/deny`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -147,7 +147,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         const token = localStorage.getItem('authToken');
         const status = action === 'approve' ? 'verified' : 'rejected';
         
-        const response = await fetch(`http://localhost:3000/api/employee/payments/${selectedPayment.id}/verify`, {
+        const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/verify`, {
           method: 'PUT',
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -157,19 +157,20 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         });
 
         if (response.ok) {
-          setPayments(prev => 
-            prev.map(payment => 
-              payment.id === selectedPayment.id 
-                ? { ...payment, status: action === 'approve' ? 'Approved' : 'Rejected' }
-                : payment
-            )
-          );
+          // Remove the payment from the list after approval
+          setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
+          setSuccessMessage(`Payment ${selectedPayment.id} has been ${action === 'approve' ? 'approved' : 'rejected'} successfully`);
+          setSnackbarOpen(true);
           handleCloseDialog();
+          
+          // Clear success message after 5 seconds
+          setTimeout(() => setSuccessMessage(''), 5000);
         } else {
-          alert('Failed to verify payment');
+          const errorData = await response.json();
+          setError(errorData.error || `Failed to ${action} payment`);
         }
       } catch (err) {
-        alert('Error verifying payment');
+        setError(`Error ${action}ing payment`);
       }
     }
   };
@@ -467,6 +468,14 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
             onClick={handleDenyClick}
           >
             Deny Payment
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<CheckCircle />}
+            onClick={() => handleVerifyPayment('approve')}
+          >
+            Approve Payment
           </Button>
         </DialogActions>
       </Dialog>

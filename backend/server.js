@@ -100,8 +100,8 @@ const csrfProtection = csrf({
     key: '_csrf',
     path: '/',
     httpOnly: true,
-    secure: false, // Changed to false for HTTP
-    sameSite: 'lax' // Changed from 'none' to 'lax' for HTTP
+    secure: true, // Changed to true for HTTPS
+    sameSite: 'none' // Changed to 'none' for HTTPS cross-origin
   },
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],
   value: (req) => {
@@ -541,10 +541,10 @@ if (process.env.NODE_ENV !== 'test') {
     console.log('Checking for admin user...');
     await ensureAdminExists();
     
-    console.log('Starting HTTP server...');
-    // Always use HTTP for simplicity (no TLS errors)
-    app.listen(3000, () => {
-      console.log('✓ Server running on http://localhost:3000');
+    console.log('Starting HTTPS server...');
+    // Use HTTPS with SSL certificates
+    https.createServer(sslOptions, app).listen(3000, () => {
+      console.log('✓ Server running on https://localhost:3000');
       console.log('=== SERVER READY ===');
     });
   })

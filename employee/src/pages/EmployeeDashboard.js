@@ -45,7 +45,7 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/admin/stats', {
+        const response = await fetch('https://localhost:3000/api/admin/stats', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
         const token = localStorage.getItem('authToken');
         if (!token) return;
 
-        const response = await fetch('http://localhost:3000/api/admin/activities', {
+        const response = await fetch('https://localhost:3000/api/admin/activities', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',
@@ -125,7 +125,7 @@ const EmployeeDashboard = ({ onNavigate, onLogout, employee }) => {
     },
     {
       title: 'Total Volume',
-      value: loading ? '...' : `$${stats.totalVolume.toLocaleString()}`,
+      value: loading ? '...' : `R${stats.totalVolume.toLocaleString()}`,
       icon: <TrendingUp />,
       color: '#9c27b0',
     },

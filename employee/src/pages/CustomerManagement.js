@@ -42,7 +42,7 @@ const CustomerManagement = ({ onNavigate, onLogout, employee }) => {
           return;
         }
 
-        const response = await fetch('http://localhost:3000/api/admin/customers', {
+        const response = await fetch('https://localhost:3000/api/admin/customers', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json',

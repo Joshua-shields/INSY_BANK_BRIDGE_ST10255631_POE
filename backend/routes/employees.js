@@ -68,7 +68,7 @@ router.get('/admin/activities', verifyToken, async (req, res) => {
       else if (txn.status === 'processing') action = 'Payment Processing';
 
       const customer = txn.user ? `${txn.user.name} (****${txn.accountNumber ? txn.accountNumber.slice(-4) : '****'})` : 'Unknown';
-      const amount = `$${txn.amount.toFixed(2)}`;
+      const amount = `R${txn.amount.toFixed(2)}`;
       const time = txn.updatedAt.toLocaleString();
 
       return {
