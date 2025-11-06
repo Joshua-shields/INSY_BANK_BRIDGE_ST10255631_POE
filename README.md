@@ -42,6 +42,9 @@ or
 # Terminal 3 - Employee portal (http://localhost:8001)
 cd employee
 npm start on windows its npm run start-https
+then Email: bankbridge@admin.com  
+Account Number: 10111026372637  
+Password: secure-admin-password
 ```
 
 ## NB Make sure u run https://localhost:3000/users and accept the certificate same as https://localhost:8000
