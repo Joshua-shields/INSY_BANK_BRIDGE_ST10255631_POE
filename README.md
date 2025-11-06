@@ -9,7 +9,7 @@ Secure banking application with international and local payment processing, sepa
 git clone <https://github.com/Joshua-shields/bank_bridge_st10255631_INSY.git>
 cd bank_bridge_st10255631_INSY
 ```
-## Youtube video link: 
+## Youtube video link: https://youtu.be/hmMoIjvbNjM
 
 ### Setup & Run
 
