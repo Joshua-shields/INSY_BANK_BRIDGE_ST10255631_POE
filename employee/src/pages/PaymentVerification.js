@@ -182,7 +182,39 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     }
   };
 
+  const handleVerifyPayment = async (action) => {
+    if (selectedPayment) {
+      try {
+        const token = localStorage.getItem('authToken');
+        const status = action === 'approve' ? 'verified' : 'rejected';
 
+        const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/verify`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status }),
+        });
+
+        if (response.ok) {
+          // Remove the payment from the list after approval
+          setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
+          setSuccessMessage(`Payment ${selectedPayment.id} has been ${action === 'approve' ? 'approved' : 'rejected'} successfully`);
+          setSnackbarOpen(true);
+          handleCloseDialog();
+
+          // Clear success message after 5 seconds
+          setTimeout(() => setSuccessMessage(''), 5000);
+        } else {
+          const errorData = await response.json();
+          setError(errorData.error || `Failed to ${action} payment`);
+        }
+      } catch (err) {
+        setError(`Error ${action}ing payment`);
+      }
+    }
+  };
 
   const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -466,28 +498,27 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
             </div>
           )}
         </DialogContent>
-        <DialogActions sx={{ p: 2, gap: 1 }}>
-          <Button onClick={handleCloseDialog} color="inherit">
-            Close
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<CheckCircle />}
-            onClick={handleApproveClick}
-          >
-            Approved
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            startIcon={<Cancel />}
-            onClick={handleDenyClick}
-          >
-            Deny Payment
-          </Button>
-
-        </DialogActions>
+         <DialogActions sx={{ p: 2, gap: 1 }}>
+           <Button onClick={handleCloseDialog} color="inherit">
+             Close
+           </Button>
+           <Button
+             variant="contained"
+             color="success"
+             startIcon={<CheckCircle />}
+             onClick={() => handleVerifyPayment('approve')}
+           >
+             Approve Payment
+           </Button>
+           <Button
+             variant="contained"
+             color="error"
+             startIcon={<Cancel />}
+             onClick={() => handleVerifyPayment('reject')}
+           >
+             Reject Payment
+           </Button>
+         </DialogActions>
       </Dialog>
 
       {/* Confirm Deny Dialog */}
