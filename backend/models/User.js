@@ -67,12 +67,12 @@ userSchema.virtual('isLocked').get(function() {
 userSchema.methods.incLoginAttempts = function() {
   const updates = { $inc: { loginAttempts: 1 } };
   
-  // Lock account after 5 failed attempts for 15 minutes
-  if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
-    updates.$set = {
-      lockUntil: Date.now() + (15 * 60 * 1000) // 15 minutes
-    };
-  }
+   // Lock account after 5 failed attempts for 5 minutes
+   if (this.loginAttempts + 1 >= 5 && !this.isLocked) {
+     updates.$set = {
+       lockUntil: Date.now() + (5 * 60 * 1000) // 5 minutes
+     };
+   }
   // Apply updates to user document
   return this.updateOne(updates);
 };
