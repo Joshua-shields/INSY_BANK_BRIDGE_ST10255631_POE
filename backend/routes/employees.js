@@ -1,25 +1,42 @@
+
+
+//---------------------------------------------- start of file ------------------------------------------//
+
+/**
+ ***Admin Routes
+ * Handles admin operations 
+ */
+//============================= start of imports =======================//
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const Transaction = require('../models/Transaction');
 const { verifyToken } = require('../middleware/auth');
-
-// Get admin dashboard stats
+//============================== end of imports ============================//
+/**
+ * 
+ * 
+ *  route GET /admin/stats
+ *  desc Retrieves key statistics for the admin dashboard
+ *  access Private (Admin only)
+ *  returns {Object} Statistics including total customers, pending payments, verified today, and total volume
+ * 
+ */
 router.get('/admin/stats', verifyToken, async (req, res) => {
   try {
-    // Check if user is admin
+    // check if user is admin
     const user = await User.findById(req.user.userId);
     if (!user || user.role !== 'admin') {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Get stats
+    // get stats
     const allUsers = await User.find({});
     const totalCustomers = allUsers.filter(u => u.role === 'customer').length;
     console.log('Filtered customers:', totalCustomers);
     const pendingPayments = await Transaction.countDocuments({ status: 'pending' });
     
-    // Verified today (completed today)
+    // today verification
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const verifiedToday = await Transaction.countDocuments({
@@ -27,7 +44,7 @@ router.get('/admin/stats', verifyToken, async (req, res) => {
       updatedAt: { $gte: startOfDay }
     });
     
-    // Total volume (sum of completed transactions)
+    // all the transactions 
     const totalVolumeResult = await Transaction.aggregate([
       { $match: { status: 'completed' } },
       { $group: { _id: null, total: { $sum: '$amount' } } }
@@ -46,7 +63,12 @@ router.get('/admin/stats', verifyToken, async (req, res) => {
   }
 });
 
-// Get recent activities
+/**
+ * route GET /admin/activities
+ * desc Retrieves recent transaction activities =
+ * access Private (Admin only)
+ * returns {Object} Array of recent activities =
+ */
 router.get('/admin/activities', verifyToken, async (req, res) => {
   try {
     // Check if user is admin
@@ -55,7 +77,7 @@ router.get('/admin/activities', verifyToken, async (req, res) => {
       return res.status(403).json({ error: 'Access denied' });
     }
 
-    // Get recent transactions
+    // Get  transactions
     const recentTransactions = await Transaction.find({})
       .populate('user', 'name')
       .sort({ updatedAt: -1 })
@@ -88,7 +110,12 @@ router.get('/admin/activities', verifyToken, async (req, res) => {
   }
 });
 
-// Get all customers
+/**
+ * route GET /admin/customers
+ * desc Retrieves all customer information for admin management
+ * access Private
+ * returns  Array of customer data 
+ */
 router.get('/admin/customers', verifyToken, async (req, res) => {
   try {
     // Check if user is admin
@@ -128,3 +155,6 @@ router.get('/admin/customers', verifyToken, async (req, res) => {
 });
 
 module.exports = router;
+
+
+//---------------------------------------------- end of file --------------------------------------------------//
