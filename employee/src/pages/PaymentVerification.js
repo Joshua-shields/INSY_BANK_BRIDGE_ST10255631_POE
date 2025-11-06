@@ -1,5 +1,11 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
-
+/**
+ * References:
+ * Payments Market Practice Group, 2023. Best Practice Guidance for the Return of Funds and Rejects of Payments. [Online] 
+Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
+[Accessed 2 November 2025].
+ */
+//--------------------------------------START OF VARIABLES--------------------------------------//
 import React, { useState, useEffect } from 'react';
 import {
   Box,
@@ -39,6 +45,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
   const [confirmApproveDialog, setConfirmApproveDialog] = useState(false);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
 
+  //------------------------------END OF VARIABLES-----------------------------//
   useEffect(() => {
     const fetchPayments = async () => {
       try {

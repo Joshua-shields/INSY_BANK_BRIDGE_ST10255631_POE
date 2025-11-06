@@ -130,7 +130,11 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 
 - Tshwane Institute of Technology. (2021). *INFORMATION SYSTEMS 3D INSY7314 LAB GUIDE 2025*. [Online]. Available at: https://advtechonline.sharepoint.com/:w:/r/sites/TertiaryStudents/_layouts/15/Doc.aspx?sourcedoc=%7BAB1212E5-A367-4729-B8EE-D76045935659%7D&file=INSY7314%20Lab%20Guide%202025.docx&action=default&mobileredirect=true [Accessed 23 July 2025].
 
-- Manico, J. & Detlefsen, A. (2015). *Iron-Clad Java: Building Secure Web Applications*. [Online]. Available at: https://www.oreilly.com/library/view/iron-clad-java/9780071835886/ [Accessed 23 July 2025].  
+- Manico, J. & Detlefsen, A. (2015). *Iron-Clad Java: Building Secure Web Applications*. [Online]. Available at: https://www.oreilly.com/library/view/iron-clad-java/9780071835886/ [Accessed 23 July 2025]. 
+
+- Payments Market Practice Group, 2023. Best Practice Guidance for the Return of Funds and Rejects of Payments. [Online] 
+Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
+[Accessed 2 November 2025].
 
 ## Annexure of AI use
 
@@ -154,6 +158,13 @@ A link to the actual generative AI chat, or screenshots of the chat:
 
  https://claude.ai/share/e40299e8-814a-4d1e-a74e-ea98147ee35c*/ 
 
+Section(s) within the assessment in which generative AI was used: Creation of the rejection system
+Name of AI tool(s) used: Claude 
+Purpose/intention behind use: Asking how to go about making the rejection process
+Date(s) in which generative AI was used: 4 Novemebr 2025 
+A link to the actual generative AI chat, or screenshots of the chat:
+
+https://claude.ai/share/e2c11171-c2b2-4143-9b0f-a5915f56f288
 
 ## Joshua
 Disclosure of AI Usage in my Assessment. 
