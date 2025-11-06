@@ -125,6 +125,8 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 - betterstackhq. (2025). Rate Limiting in Express.js | Better Stack Community. [online] Available at: https://betterstack.com/community/guides/scaling-nodejs/rate-limiting-express/ [Accessed 24 September 2025]. 
 
 - OWASP (2025). Multifactor authentication - OWASP cheat sheet series. [online] cheatsheetseries.owasp.org. Available at: https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html. [Accessed 26 September 2025]
+- React (2024). Quick Start. [online] react.dev. Available at: https://react.dev/learn. [ Accessed 22 october 2025]
+- MDN Contributors (2023). JavaScript. [online] MDN Web Docs. Available at: https://developer.mozilla.org/en-US/docs/Web/javascript.[ Accessed 19 october 2025]
 
 ## Luke
 
@@ -177,3 +179,12 @@ Purpose/intention behind use: JWT issue
 Date(s) in which generative AI was used: 4 October 2025 
 A link to the actual generative AI chat, or screenshots of the chat:
 https://chatgpt.com/share/68e7d1df-4048-8000-b3dd-91ef758282d3
+
+Section(s) within the assessment in which generative AI was used: CSRF token issue
+Name of AI tool(s) used: ChatGPT
+Purpose/intention behind use: CSRF
+Date(s) in which generative AI was used: 29 October 2025 
+A link to the actual generative AI chat, or screenshots of the chat:
+https://grok.com/share/bGVnYWN5LWNvcHk%3D_d97c2f64-4fe4-4c8e-9cd6-96d7a2e3a5f1
+
+
