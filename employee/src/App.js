@@ -1,4 +1,6 @@
-//////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
+//----------------------------------------- start of file ---------------------------------//
+
+//========================= start of imports =======================//
 import React, { useState } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
@@ -7,6 +9,9 @@ import EmployeeDashboard from './pages/EmployeeDashboard';
 import CustomerManagement from './pages/CustomerManagement';
 import PaymentVerification from './pages/PaymentVerification';
 
+//============================== end of imports =============================//
+
+// Define the theme with primary and secondary colors
 const theme = createTheme({
   palette: {
     primary: {
@@ -18,32 +23,42 @@ const theme = createTheme({
   },
 });
 
+// Main App component for the employee 
 function App() {
+  
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
   const [currentView, setCurrentView] = useState('dashboard');
+  // State to store employee data after login
   const [employee, setEmployee] = useState(null);
 
+  // Handler for successful login
   const handleLogin = (employeeData) => {
     setIsAuthenticated(true);
     setEmployee(employeeData);
     setCurrentView('dashboard');
   };
 
+  // Handler for logout
   const handleLogout = () => {
     setIsAuthenticated(false);
     setEmployee(null);
     setCurrentView('dashboard');
   };
 
+  // Handler for navigation
   const handleNavigation = (view) => {
     setCurrentView(view);
   };
 
+  // Function to render the current view
   const renderCurrentView = () => {
+    // If not authenticated, show login screenn
     if (!isAuthenticated) {
       return <EmployeeLogin onLogin={handleLogin} />;
     }
 
+    // Switch based on current view
     switch (currentView) {
       case 'customers':
         return <CustomerManagement onNavigate={handleNavigation} onLogout={handleLogout} employee={employee} />;
@@ -54,6 +69,7 @@ function App() {
     }
   };
 
+  
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -65,4 +81,4 @@ function App() {
 }
 
 export default App;
-//////////////////////////////////////////////////////////////////END OF FILE//////////////////////////////////////////////////////////////////
+//--------------------------------------- end of file -------------------------------------//
