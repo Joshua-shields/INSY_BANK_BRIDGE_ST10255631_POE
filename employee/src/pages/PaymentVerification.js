@@ -1,5 +1,4 @@
 //////////////////////////////////////////////////////////////////START OF FILE//////////////////////////////////////////////////////////////////
-//////////////////////////////////////////////////////////////////coming in part 3//////////////////////////////////////////////////////////////////
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -103,6 +102,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     setConfirmApproveDialog(false);
   };
 
+  //opens the confirmation dialog for denying a payment when the employee clicks the "Reject Payment" button
   const handleDenyClick = () => {
     setConfirmDenyDialog(true);
   };
@@ -111,11 +111,14 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
     setConfirmApproveDialog(true);
   };
 
+  // method Processes the payment denial/rejection
   const handleConfirmDeny = async () => {
     if (selectedPayment) {
       try {
+        //retrieves the authentication token from the browser's localStorage
         const token = localStorage.getItem('authToken');
 
+        //sends a PUT request to backend to deny the payment
         const response = await fetch(`https://localhost:3000/api/employee/payments/${selectedPayment.id}/deny`, {
           method: 'PUT',
           headers: {
@@ -123,14 +126,15 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            status: 'denied',
-            note: verificationNote
+            status: 'denied', //marks the payment as denied
+            note: verificationNote //shows the optional reason for denial
           }),
         });
 
         if (response.ok) {
           // Remove the denied payment from the list
           setPayments(prev => prev.filter(payment => payment.id !== selectedPayment.id));
+          //displays success message to the employee
           setSuccessMessage(`Payment ${selectedPayment.id} has been denied successfully`);
           setSnackbarOpen(true);
           handleCloseDialog();
@@ -138,6 +142,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
           // Clear success message after 5 seconds
           setTimeout(() => setSuccessMessage(''), 5000);
         } else {
+          //error handling for failed denial
           const errorData = await response.json();
           setError(errorData.error || 'Failed to deny payment');
         }
@@ -510,7 +515,7 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
            >
              Approve Payment
            </Button>
-           <Button
+           <Button /* button for rejecting payments */
              variant="contained"
              color="error"
              startIcon={<Cancel />}
@@ -527,9 +532,9 @@ const PaymentVerification = ({ onNavigate, onLogout, employee }) => {
         <DialogContent>
           <Alert severity="warning" sx={{ mb: 2 }}>
             Are you sure you want to deny this payment? This action cannot be undone.
-          </Alert>
+          </Alert> {/* confirmation message when rejecting payment */}
           {selectedPayment && (
-            <Box sx={{ mt: 2 }}>
+            <Box sx={{ mt: 2 }}> {/* displays the details of the transaction that is about to be deleted */}
               <Typography variant="body2" color="text.secondary">
                 Payment ID: <strong>{selectedPayment.id}</strong>
               </Typography>

@@ -344,24 +344,25 @@ router.put('/employee/payments/:id/deny', async (req, res) => {
   try {
     const { note } = req.body;
     
-    // Update transaction status to denied/failed
+    //updates the transaction status to failed
     const transaction = await Transaction.findByIdAndUpdate(
       req.params.id,
       { 
-        status: 'failed',
-        verificationNote: note || 'Payment denied by admin'
+        status: 'failed', //mark the transaction as failed
+        verificationNote: note || 'Payment denied by admin' //store reason or default message
       },
-      { new: true }
+      { new: true } //returns the updated document
     );
     
+    //checks if transaction exists in database
     if (!transaction) {
       return res.status(404).json({ error: 'Payment not found' });
     }
     
-    // Log the denial for audit purposes
+    //logs the denial for audit purposes
     console.log(`Payment ${req.params.id} denied. Note: ${note || 'No note provided'}`);
     
-    // Respond with success message
+    //response for success message
     res.json({ 
       message: 'Payment denied successfully',
       transaction: {
@@ -371,6 +372,7 @@ router.put('/employee/payments/:id/deny', async (req, res) => {
       }
     });
   } catch (error) {
+    //database error handling
     console.error('Error denying payment:', error);
     res.status(500).json({ error: 'Server error' });
   }
