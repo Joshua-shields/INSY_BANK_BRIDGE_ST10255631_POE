@@ -132,7 +132,11 @@ All sensitive data encrypted at rest, JWT tokens for authentication, HTTPS for d
 
 - Tshwane Institute of Technology. (2021). *INFORMATION SYSTEMS 3D INSY7314 LAB GUIDE 2025*. [Online]. Available at: https://advtechonline.sharepoint.com/:w:/r/sites/TertiaryStudents/_layouts/15/Doc.aspx?sourcedoc=%7BAB1212E5-A367-4729-B8EE-D76045935659%7D&file=INSY7314%20Lab%20Guide%202025.docx&action=default&mobileredirect=true [Accessed 23 July 2025].
 
-- Manico, J. & Detlefsen, A. (2015). *Iron-Clad Java: Building Secure Web Applications*. [Online]. Available at: https://www.oreilly.com/library/view/iron-clad-java/9780071835886/ [Accessed 23 July 2025].  
+- Manico, J. & Detlefsen, A. (2015). *Iron-Clad Java: Building Secure Web Applications*. [Online]. Available at: https://www.oreilly.com/library/view/iron-clad-java/9780071835886/ [Accessed 23 July 2025]. 
+
+- Payments Market Practice Group, 2023. Best Practice Guidance for the Return of Funds and Rejects of Payments. [Online] 
+Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
+[Accessed 2 November 2025].
 
 - Payments Market Practice Group, 2023. Best Practice Guidance for the Return of Funds and Rejects of Payments. [Online] 
 Available at: https://www.swift.com/sites/default/files/files/best-practice-guidance-for-the-return-of-funds-and-rejects-of-payments_v1.0-drupal.pdf
